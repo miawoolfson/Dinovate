@@ -38,7 +38,7 @@ async function editProduct(productID, data) {
 
     try {
 
-        const result = await Order.updateOne({ productId: productID }, data, { 
+        const result = await Card.updateOne({ cardId: productID }, data, { 
             runValidators: true
         });
 
@@ -48,11 +48,11 @@ async function editProduct(productID, data) {
 
         }
 
-        return ({status: 200});
+        return ({status: 200, message: "Success"});
 
     } catch (e) {
 
-        console.error('Error updating item:', error);
+        console.error('Error updating item:', e);
         return ({status: 500, message: e});
 
     }
@@ -104,9 +104,32 @@ async function createProduct(name, price, labels, image) {
 
 }
 
+
+async function getProduct(cardName) {
+
+    try {
+
+        const product = await Card.findOne({ cardName });
+
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        return product;
+
+    } catch (err) {
+
+        console.error(err.message);
+        throw err;
+
+    }
+
+}
+
 module.exports = {
     getAllProducts,
     removeProduct,
     editProduct,
-    createProduct
+    createProduct,
+    getProduct
 }

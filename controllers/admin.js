@@ -5,6 +5,40 @@ const ordersService = require("../services/orders");
 const { compile } = require("ejs");
 
 
+async function getPopUp(req, res) {
+
+    const type = req.params.type;
+
+    switch (type) {
+
+        case "products":
+            
+            const action = req.query.action;
+
+            var renderObject = {
+        
+                action
+        
+            }
+        
+            if (action == "Edit") {
+        
+                const cardName = req.query.cardName;
+                const object = await productsService.getProduct(cardName);
+                const combinedObj = Object.assign({}, renderObject, object._doc);
+                console.log(combinedObj);
+        
+                return res.render('productsPopup', combinedObj);
+        
+        
+            }
+            return res.render('productsPopup', renderObject);
+
+    }
+
+}
+
+
 async function showAdminView(req, res) {
 
     // extract data from session
@@ -92,9 +126,9 @@ async function deleteItem(req,res) {
 
 async function editItem(req, res) {
 
-    const ID = req.params.id;
+    const ID = req.body.id;
     const type = req.params.type;
-    const data = req.params.data;
+    const data = req.body.data;
     let response = null;
 
     try {
@@ -163,5 +197,7 @@ async function createItem(req, res) {
 module.exports = {
     showAdminView,
     deleteItem,
-    createItem
+    createItem,
+    getPopUp,
+    editItem
 }

@@ -64,7 +64,7 @@
 
                                         <ul class="product-links">
 
-                                            <li><a href="#"><i class="fas fa-pencil-alt" onClick="editItem('<%= JSON.stringify(item) %>', 'products')"></i></a></li>
+                                            <li><a href="#"><i class="fas fa-pencil-alt" onClick="showPopUp({type: 'products', action: 'Edit', cardName: '<%= item.cardName %>'})"></i></a></li>
                                             <li><a href="#"><i class="fas fa-trash" onClick="deleteItem('<%= JSON.stringify(item) %>', 'products')"></i></a></li>
                                         
                                         </ul>
@@ -89,13 +89,11 @@
 
             <div class = "showPopUp">
 
-                <button type="button" name = "products" class="btn btn-outline-primary" onClick = "showPopUp()">Create</button>
+                <button type="button" name = "products" class="btn btn-outline-primary" onClick = "showPopUp({type: 'products', action: 'Create'})">Create</button>
     
             </div>
     
-            <div id = "popupSection" style = "display: none;">
-                <%- include('productsPopup') %>
-            </div>
+            <div id = "popupSection"></div>
 
         </div>
 

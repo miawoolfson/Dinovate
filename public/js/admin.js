@@ -42,13 +42,6 @@ function showElement() {
 
 }
 
-function editItem(item, type) {
-
-    item = JSON.parse(item);
-    window.alert("Editting " + item.cardName);
-
-}
-
 function deleteItem(item, type) {
 
     item = JSON.parse(item);
@@ -85,9 +78,147 @@ function deleteItem(item, type) {
 
 }
 
-function showPopUp() {
+function showPopUp(data) {
 
-    var popup = document.getElementById('popupSection');
-    popup.style.display = "block";
+    const popup = document.getElementById('popupSection');
+    const type = data.type;
+    const action = data.action;
+
+    switch (type) {
+
+        case "products":
+
+            const endpoint = "/admin/popup/products?action=";
+
+            if (action == 'Create') {
+
+                fetch(`${endpoint}Create`)
+                .then(response => response.text())
+                .then(html => {
+                    popup.innerHTML = html;
+                })
+                .catch(err => console.log('Error loading popup:', err));
+
+            }
+            else {
+
+                const cardName = data.cardName;
+
+                fetch(`${endpoint}Edit&cardName=${cardName}`)
+                .then(response => response.text())
+                .then(html => {
+                    popup.innerHTML = html;
+                })
+                .catch(err => console.log('Error loading popup:', err));
+
+            }
+
+    }
+
+
+}
+
+function closePopup(event) {
+    // Check if the click event occurred on the overlay or the close icon
+    if (event.target.classList.contains('modal-overlay') || event.target.classList.contains('close-icon')) {
+        document.querySelector('#popupSection').innerHTML = "";
+    }
+}
+
+function createItem(type) {
+    
+    event.preventDefault();
+
+    switch (type) {
+
+        case "products":
+
+            // Get the form data
+            const cardName = document.getElementById('cardName').value;
+            const price = document.getElementById('price').value;
+            const labels = document.getElementById('labels').value;
+            const image_location = document.getElementById('image_location').value;
+
+            if (confirm("Are you sure you want to create  " + cardName + "?")) {
+                fetch(`/admin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type,
+                        cardName,
+                        price,
+                        labels,
+                        image_location
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    window.alert(data.message);
+                    location.reload(); 
+
+                })
+                .catch(error => {
+                    window.alert("Error creating item: " + error.message);
+                });
+            }
+
+    }
+
+}
+
+function editItem(type) {
+    
+    event.preventDefault();
+
+    switch (type) {
+
+        case "products":
+
+            // Get the form data
+            const cardName = document.getElementById('cardName').value;
+            const cardId = document.getElementById('cardId').value;
+            const price = document.getElementById('price').value;
+            const image_location = document.getElementById('image_location').value;
+
+            if (confirm("Are you sure you want to edit  " + cardName + "?")) {
+                fetch(`/admin/${type}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: cardId,
+                        data: {
+                            price,
+                            image_location
+                        }
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    window.alert(data.message);
+                    location.reload(); 
+
+                })
+                .catch(error => {
+                    window.alert("Error editting item: " + error.message);
+                });
+            }
+
+    }
 
 }
